@@ -21,12 +21,11 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
-
-  String _firstName = '';
-  String _lastName = '';
-  String _userName = '';
-  String _email = '';
-  String _password = '';
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _userNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   bool _isLoading = false;
 
@@ -43,11 +42,11 @@ class _RegisterFormState extends State<RegisterForm> {
 
     try {
       final newUser = User.newUser(
-        firstName: _firstName,
-        lastName: _lastName,
-        username: _userName,
-        email: _email,
-        password: _password,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        username: _userNameController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
       );
 
       final reqBody = UserCreateReqBody.fromUser(newUser);
@@ -75,8 +74,7 @@ class _RegisterFormState extends State<RegisterForm> {
               labelText: 'First Name',
             ),
             validator: authValidator.validateFirstName,
-            initialValue: _firstName,
-            onSaved: (newValue) => _firstName = newValue!,
+            controller: _firstNameController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -85,8 +83,7 @@ class _RegisterFormState extends State<RegisterForm> {
               labelText: 'Last Name',
             ),
             validator: authValidator.validateLastName,
-            initialValue: _lastName,
-            onSaved: (newValue) => _lastName = newValue!,
+            controller: _lastNameController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -95,8 +92,7 @@ class _RegisterFormState extends State<RegisterForm> {
               labelText: 'Username',
             ),
             validator: authValidator.validateUsername,
-            initialValue: _userName,
-            onSaved: (newValue) => _userName = newValue!,
+            controller: _userNameController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -106,10 +102,7 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: authValidator.validateEmail,
             keyboardType: TextInputType.emailAddress,
-            initialValue: _email,
-            onSaved: (newValue) {
-              _email = newValue!;
-            },
+            controller: _emailController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -119,9 +112,8 @@ class _RegisterFormState extends State<RegisterForm> {
             obscureText: true,
             autocorrect: false,
             enableSuggestions: false,
-            initialValue: _password,
             validator: authValidator.validatePassword,
-            onSaved: (newValue) => _password = newValue!,
+            controller: _passwordController,
           ),
           const SizedBox(height: 20),
           ElevatedButton(

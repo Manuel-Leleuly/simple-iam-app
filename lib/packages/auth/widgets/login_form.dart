@@ -22,10 +22,17 @@ class LoginForm extends ConsumerStatefulWidget {
 
 class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  String _email = '';
-  String _password = '';
   bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   void _onLoginSubmit() async {
     FocusScope.of(context).unfocus();
@@ -40,8 +47,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
     try {
       final loginData = Login(
-        email: _email,
-        password: _password,
+        email: _emailController.text,
+        password: _passwordController.text,
       );
 
       final response = await authApi.login(loginData);
@@ -72,10 +79,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             ),
             validator: authValidator.validateEmail,
             keyboardType: TextInputType.emailAddress,
-            initialValue: _email,
-            onSaved: (newValue) {
-              _email = newValue!;
-            },
+            controller: _emailController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -85,15 +89,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             obscureText: true,
             autocorrect: false,
             enableSuggestions: false,
-            initialValue: _password,
+            controller: _passwordController,
             validator: (value) {
               return authValidator.validatePassword(
                 value,
                 isLogin: true,
               );
-            },
-            onSaved: (newValue) {
-              _password = newValue!;
             },
           ),
           const SizedBox(height: 20),
