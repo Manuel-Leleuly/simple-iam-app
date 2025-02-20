@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:simple_iam/helpers/snackbar_helper.dart';
 import 'package:simple_iam/packages/auth/widgets/login_form.dart';
+import 'package:simple_iam/packages/auth/widgets/register_form.dart';
 
 enum FormType { login, register }
 
@@ -34,15 +36,29 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 12),
             if (_selectedForm == FormType.login)
-              const LoginForm()
+              LoginForm(
+                onLoginSuccess: () {
+                  showSnackBar(
+                    context: context,
+                    snackBar: const SnackBar(
+                      content: Text('Login successful'),
+                    ),
+                  );
+                },
+              )
             else
-              // TODO: replace with the actual register form
-              const SizedBox(
-                width: double.infinity,
-                child: Text(
-                  'Register Form',
-                  textAlign: TextAlign.center,
-                ),
+              RegisterForm(
+                onRegisterSuccess: () {
+                  showSnackBar(
+                    context: context,
+                    snackBar: const SnackBar(
+                      content: Text('User successfully created!'),
+                    ),
+                  );
+                  setState(() {
+                    _selectedForm = FormType.login;
+                  });
+                },
               ),
             const SizedBox(height: 12),
             TextButton(

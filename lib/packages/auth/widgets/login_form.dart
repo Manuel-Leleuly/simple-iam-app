@@ -9,7 +9,12 @@ const authValidator = AuthValidator();
 const authApi = AuthApi();
 
 class LoginForm extends ConsumerStatefulWidget {
-  const LoginForm({super.key});
+  final VoidCallback onLoginSuccess;
+
+  const LoginForm({
+    super.key,
+    required this.onLoginSuccess,
+  });
 
   @override
   ConsumerState<LoginForm> createState() => _LoginFormState();
@@ -23,6 +28,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   bool _isLoading = false;
 
   void _onLoginSubmit() async {
+    FocusScope.of(context).unfocus();
     final isAllValid = _formKey.currentState!.validate();
     if (!isAllValid) return;
 
@@ -42,13 +48,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
       if (response != null) {
         ref.read(tokenProvider.notifier).setToken(response);
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Login successful'),
-            ),
-          );
-        }
+        widget.onLoginSuccess();
       }
     } catch (error) {
       print(error);

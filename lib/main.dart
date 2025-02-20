@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:simple_iam/packages/auth/screens/login_screen.dart';
+import 'package:simple_iam/packages/auth/screens/auth_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

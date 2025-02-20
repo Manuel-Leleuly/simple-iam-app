@@ -1,3 +1,5 @@
+import 'package:simple_iam/models/user_model.dart';
+
 class UserListParams {
   final String? firstName;
   final String? lastName;
@@ -46,6 +48,16 @@ class UserCreateReqBody {
     required this.email,
     required this.password,
   });
+
+  factory UserCreateReqBody.fromUser(User userData) {
+    return UserCreateReqBody(
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      username: userData.username,
+      email: userData.email,
+      password: userData.password,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     var result = {

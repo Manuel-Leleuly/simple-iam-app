@@ -18,7 +18,7 @@ class UserApi {
         headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         },
-        body: reqBody.toJson(),
+        body: json.encode(reqBody.toJson()),
       );
 
       if (response.statusCode == HttpStatus.ok) {
