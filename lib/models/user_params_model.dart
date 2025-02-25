@@ -1,3 +1,4 @@
+import 'package:simple_iam/constants/constants.dart';
 import 'package:simple_iam/models/user_model.dart';
 
 class UserListParams {
@@ -11,9 +12,16 @@ class UserListParams {
     this.firstName,
     this.lastName,
     this.email,
-    this.offset = 0,
-    this.limit = 10,
+    this.offset = defaultOffset,
+    this.limit = defaultLimit,
   });
+
+  factory UserListParams.init() {
+    return const UserListParams(
+      offset: defaultOffset,
+      limit: defaultLimit,
+    );
+  }
 
   factory UserListParams.fromJson(Map<String, dynamic> jsonData) {
     return UserListParams(
@@ -25,13 +33,26 @@ class UserListParams {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'offset': offset.toString(),
-        'limit': limit.toString(),
-      };
+  Map<String, dynamic> toJson() {
+    var result = {
+      'offset': offset.toString(),
+      'limit': limit.toString(),
+    };
+
+    if (firstName != null && firstName!.isNotEmpty) {
+      result = {...result, 'firstName': firstName!};
+    }
+
+    if (lastName != null && lastName!.isNotEmpty) {
+      result = {...result, 'lastName': lastName!};
+    }
+
+    if (email != null && email!.isNotEmpty) {
+      result = {...result, 'email': email!};
+    }
+
+    return result;
+  }
 }
 
 class UserCreateReqBody {

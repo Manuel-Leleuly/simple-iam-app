@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:simple_iam/api/auth_api.dart';
-import 'package:simple_iam/models/auth_model.dart';
+import 'package:simple_iam/packages/auth/logic/auth_logic.dart';
 import 'package:simple_iam/packages/auth/validator/auth_validator.dart';
-import 'package:simple_iam/providers/token_provider.dart';
 
 const authValidator = AuthValidator();
 const authApi = AuthApi();
 
-class LoginForm extends ConsumerStatefulWidget {
+class LoginForm extends HookConsumerWidget {
   final VoidCallback onLoginSuccess;
 
   const LoginForm({
@@ -17,59 +16,11 @@ class LoginForm extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<LoginForm> createState() => _LoginFormState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authLogic = useAuthLogic(context, ref);
 
-class _LoginFormState extends ConsumerState<LoginForm> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  bool _isLoading = false;
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _onLoginSubmit() async {
-    FocusScope.of(context).unfocus();
-    final isAllValid = _formKey.currentState!.validate();
-    if (!isAllValid) return;
-
-    _formKey.currentState!.save();
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final loginData = Login(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      final response = await authApi.login(loginData);
-
-      if (response != null) {
-        ref.read(tokenProvider.notifier).setToken(response);
-        widget.onLoginSuccess();
-      }
-    } catch (error) {
-      print(error);
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: authLogic.formKey,
       child: Column(
         children: [
           TextFormField(
@@ -79,7 +30,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             ),
             validator: authValidator.validateEmail,
             keyboardType: TextInputType.emailAddress,
-            controller: _emailController,
+            controller: authLogic.emailController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -89,7 +40,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             obscureText: true,
             autocorrect: false,
             enableSuggestions: false,
-            controller: _passwordController,
+            controller: authLogic.passwordController,
             validator: (value) {
               return authValidator.validatePassword(
                 value,
@@ -99,8 +50,10 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: _isLoading ? null : _onLoginSubmit,
-            child: switch (_isLoading) {
+            onPressed: authLogic.isLoading
+                ? null
+                : () => authLogic.onLoginSubmit(onLoginSuccess),
+            child: switch (authLogic.isLoading) {
               true => const SizedBox(
                   height: 16,
                   width: 16,

@@ -9,8 +9,8 @@ class Paging {
 
   factory Paging.fromJson(Map<String, dynamic> jsonData) {
     return Paging(
-      next: jsonData['next'],
-      prev: jsonData['prev'],
+      next: jsonData['next'] ?? '',
+      prev: jsonData['prev'] ?? '',
     );
   }
 }

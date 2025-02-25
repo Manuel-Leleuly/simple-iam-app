@@ -43,7 +43,7 @@ class User {
       lastName: jsonData['last_name'],
       username: jsonData['username'],
       email: jsonData['email'],
-      password: jsonData['password'],
+      password: jsonData['password'] ?? '',
       createdAt: DateTime.parse(jsonData['created_at']),
       updatedAt: DateTime.parse(jsonData['updated_at']),
     );
@@ -69,7 +69,7 @@ class User {
 }
 
 // helper functions
-List<User> getUserListFromJsonResponse(List<Map<String, dynamic>> jsonData) {
+List<User> getUserListFromJsonResponse(List<dynamic> jsonData) {
   List<User> users = [];
 
   for (var userData in jsonData) {

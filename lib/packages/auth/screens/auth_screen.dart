@@ -5,14 +5,16 @@ import 'package:simple_iam/packages/auth/widgets/register_form.dart';
 
 enum FormType { login, register }
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class AuthScreen extends StatefulWidget {
+  const AuthScreen({super.key});
+
+  static const routeName = '/auth';
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _AuthScreenState extends State<AuthScreen> {
   FormType _selectedForm = FormType.login;
 
   @override

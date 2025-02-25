@@ -20,5 +20,6 @@ class TokenNotifier extends StateNotifier<Token> {
   }
 }
 
-final tokenProvider =
-    StateNotifierProvider<TokenNotifier, Token>((ref) => TokenNotifier());
+final tokenProvider = StateNotifierProvider<TokenNotifier, Token>(
+  (ref) => TokenNotifier(),
+);

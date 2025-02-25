@@ -1,24 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
+import 'package:simple_iam/helpers/api_helper.dart';
 import 'package:simple_iam/helpers/uri_helper.dart';
 import 'package:simple_iam/models/response_model.dart';
 import 'package:simple_iam/models/user_model.dart';
 import 'package:simple_iam/models/user_params_model.dart';
 
 class UserApi {
-  const UserApi();
+  final String? _accessToken;
+
+  // TODO: find a way to make api helper get access token directly
+  const UserApi([this._accessToken]);
 
   Future<User?> createUser(UserCreateReqBody reqBody) async {
     try {
       final uri = getUri(path: '/iam/v1/users');
-      final response = await http.post(
+      final response = await sendRequest(
         uri,
-        headers: {
-          HttpHeaders.contentTypeHeader: ContentType.json.value,
-        },
-        body: json.encode(reqBody.toJson()),
+        method: HttpMethod.post,
+        reqBody: reqBody.toJson(),
       );
 
       if (response.statusCode == HttpStatus.ok) {
@@ -36,11 +37,10 @@ class UserApi {
   Future<User?> getUserById(String id) async {
     try {
       final uri = getUri(path: '/iam/v1/users/$id');
-      final response = await http.get(
+      final response = await sendRequest(
         uri,
-        headers: {
-          HttpHeaders.contentTypeHeader: ContentType.json.value,
-        },
+        accessToken: _accessToken,
+        method: HttpMethod.get,
       );
 
       if (response.statusCode == HttpStatus.ok) {
@@ -55,21 +55,24 @@ class UserApi {
     }
   }
 
-  Future<WithPagination<List<User>>?> getUserList(UserListParams params) async {
+  Future<WithPagination<List<User>>?> getUserList(
+      [UserListParams? params]) async {
     try {
       final uri = getUri(
         path: '/iam/v1/users',
-        queryParams: params.toJson(),
+        queryParams: params?.toJson(),
       );
-      final response = await http.get(
+      final response = await sendRequest(
         uri,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: HttpMethod.get,
+        accessToken: _accessToken,
       );
 
+      print({'status code': response.statusCode});
+
       if (response.statusCode == HttpStatus.ok) {
-        final responseBody = json.decode(response.body)['data'];
+        final responseBody = json.decode(response.body);
+        print({'response body': responseBody});
         return WithPagination<List<User>>(
           data: getUserListFromJsonResponse(responseBody['data']),
           paging: Paging.fromJson(responseBody['paging']),

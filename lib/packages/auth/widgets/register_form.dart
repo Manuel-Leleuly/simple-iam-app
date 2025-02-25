@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:simple_iam/api/user_api.dart';
-import 'package:simple_iam/models/user_model.dart';
-import 'package:simple_iam/models/user_params_model.dart';
+import 'package:simple_iam/packages/auth/logic/auth_logic.dart';
 import 'package:simple_iam/packages/auth/validator/auth_validator.dart';
 
 const authValidator = AuthValidator();
 const userApi = UserApi();
 
-class RegisterForm extends StatefulWidget {
+class RegisterForm extends HookConsumerWidget {
   final VoidCallback onRegisterSuccess;
 
   const RegisterForm({
@@ -16,56 +16,11 @@ class RegisterForm extends StatefulWidget {
   });
 
   @override
-  State<RegisterForm> createState() => _RegisterFormState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authLogic = useAuthLogic(context, ref);
 
-class _RegisterFormState extends State<RegisterForm> {
-  final _formKey = GlobalKey<FormState>();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _userNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  bool _isLoading = false;
-
-  void _onRegisterSubmit() async {
-    FocusScope.of(context).unfocus();
-    final isAllValid = _formKey.currentState!.validate();
-    if (!isAllValid) return;
-
-    _formKey.currentState!.save();
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final newUser = User.newUser(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        username: _userNameController.text,
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      final reqBody = UserCreateReqBody.fromUser(newUser);
-      await userApi.createUser(reqBody);
-
-      widget.onRegisterSuccess();
-    } catch (error) {
-      print(error);
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: authLogic.formKey,
       child: Column(
         children: [
           TextFormField(
@@ -74,7 +29,7 @@ class _RegisterFormState extends State<RegisterForm> {
               labelText: 'First Name',
             ),
             validator: authValidator.validateFirstName,
-            controller: _firstNameController,
+            controller: authLogic.firstNameController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -83,7 +38,7 @@ class _RegisterFormState extends State<RegisterForm> {
               labelText: 'Last Name',
             ),
             validator: authValidator.validateLastName,
-            controller: _lastNameController,
+            controller: authLogic.lastNameController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -92,7 +47,7 @@ class _RegisterFormState extends State<RegisterForm> {
               labelText: 'Username',
             ),
             validator: authValidator.validateUsername,
-            controller: _userNameController,
+            controller: authLogic.usernameController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -102,7 +57,7 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             validator: authValidator.validateEmail,
             keyboardType: TextInputType.emailAddress,
-            controller: _emailController,
+            controller: authLogic.emailController,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -113,12 +68,14 @@ class _RegisterFormState extends State<RegisterForm> {
             autocorrect: false,
             enableSuggestions: false,
             validator: authValidator.validatePassword,
-            controller: _passwordController,
+            controller: authLogic.passwordController,
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: _isLoading ? null : _onRegisterSubmit,
-            child: switch (_isLoading) {
+            onPressed: authLogic.isLoading
+                ? null
+                : () => authLogic.onRegisterSubmit(onRegisterSuccess),
+            child: switch (authLogic.isLoading) {
               true => const SizedBox(
                   height: 16,
                   width: 16,
