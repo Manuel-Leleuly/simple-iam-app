@@ -1,4 +1,5 @@
 import 'package:simple_iam/constants/constants.dart';
+import 'package:simple_iam/helpers/object_helper.dart';
 import 'package:simple_iam/models/user_model.dart';
 
 class UserListParams {
@@ -35,23 +36,14 @@ class UserListParams {
 
   Map<String, dynamic> toJson() {
     var result = {
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': email,
       'offset': offset.toString(),
       'limit': limit.toString(),
     };
 
-    if (firstName != null && firstName!.isNotEmpty) {
-      result = {...result, 'firstName': firstName!};
-    }
-
-    if (lastName != null && lastName!.isNotEmpty) {
-      result = {...result, 'lastName': lastName!};
-    }
-
-    if (email != null && email!.isNotEmpty) {
-      result = {...result, 'email': email!};
-    }
-
-    return result;
+    return ObjectHelper.cleanObject(result);
   }
 }
 
@@ -83,15 +75,42 @@ class UserCreateReqBody {
   Map<String, dynamic> toJson() {
     var result = {
       'first_name': firstName,
+      'last_name': lastName,
       'username': username,
       'email': email,
       'password': password,
     };
 
-    if (lastName != null) {
-      result = {...result, 'last_name': lastName!};
-    }
+    return ObjectHelper.cleanObject(result);
+  }
+}
 
-    return result;
+class UserUpdateReqBody {
+  final String? firstName;
+  final String? lastName;
+  final String? username;
+
+  UserUpdateReqBody({
+    required this.firstName,
+    required this.lastName,
+    required this.username,
+  });
+
+  factory UserUpdateReqBody.fromUser(User user) {
+    return UserUpdateReqBody(
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.lastName,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    var result = {
+      'first_name': firstName,
+      'last_name': lastName,
+      'username': username,
+    };
+
+    return ObjectHelper.cleanObject(result);
   }
 }

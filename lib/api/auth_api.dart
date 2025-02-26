@@ -16,13 +16,10 @@ class AuthApi {
         method: HttpMethod.post,
         reqBody: loginData.toJson(),
       );
+      if (response.statusCode != HttpStatus.ok) return null;
 
-      if (response.statusCode == HttpStatus.ok) {
-        final responseBody = json.decode(response.body);
-        return Token.fromJson(responseBody['data']);
-      }
-
-      return null;
+      final responseBody = json.decode(response.body);
+      return Token.fromJson(responseBody['data']);
     } catch (error) {
       print(error);
       return null;

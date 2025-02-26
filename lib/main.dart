@@ -9,7 +9,7 @@ import 'package:simple_iam/providers/token_provider.dart';
 import 'package:simple_iam/routes/routes.dart';
 
 final colorScheme = ColorScheme.fromSeed(
-  seedColor: Colors.blue,
+  seedColor: Colors.purple,
 );
 
 void main() {
@@ -33,7 +33,7 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Simple IAM',
       theme: ThemeData().copyWith(
-        primaryColor: colorScheme.surface,
+        primaryColor: colorScheme.primary,
         scaffoldBackgroundColor: colorScheme.surface,
         colorScheme: colorScheme,
         textTheme: GoogleFonts.latoTextTheme(),

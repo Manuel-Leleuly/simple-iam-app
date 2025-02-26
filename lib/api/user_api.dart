@@ -21,13 +21,10 @@ class UserApi {
         method: HttpMethod.post,
         reqBody: reqBody.toJson(),
       );
+      if (response.statusCode != HttpStatus.ok) return null;
 
-      if (response.statusCode == HttpStatus.ok) {
-        final responseBody = json.decode(response.body);
-        return User.fromJson(responseBody['data']);
-      }
-
-      return null;
+      final responseBody = json.decode(response.body);
+      return User.fromJson(responseBody['data']);
     } catch (error) {
       print(error);
       return null;
@@ -42,13 +39,10 @@ class UserApi {
         accessToken: _accessToken,
         method: HttpMethod.get,
       );
+      if (response.statusCode != HttpStatus.ok) return null;
 
-      if (response.statusCode == HttpStatus.ok) {
-        final responseBody = json.decode(response.body);
-        return User.fromJson(responseBody['data']);
-      }
-
-      return null;
+      final responseBody = json.decode(response.body);
+      return User.fromJson(responseBody['data']);
     } catch (error) {
       print(error);
       return null;
@@ -67,19 +61,31 @@ class UserApi {
         method: HttpMethod.get,
         accessToken: _accessToken,
       );
+      if (response.statusCode != HttpStatus.ok) return null;
 
-      print({'status code': response.statusCode});
-
-      if (response.statusCode == HttpStatus.ok) {
-        final responseBody = json.decode(response.body);
-        print({'response body': responseBody});
-        return WithPagination<List<User>>(
-          data: getUserListFromJsonResponse(responseBody['data']),
-          paging: Paging.fromJson(responseBody['paging']),
-        );
-      }
-
+      final responseBody = json.decode(response.body);
+      return WithPagination<List<User>>(
+        data: getUserListFromJsonResponse(responseBody['data']),
+        paging: Paging.fromJson(responseBody['paging']),
+      );
+    } catch (error) {
+      print(error);
       return null;
+    }
+  }
+
+  Future<Response<String>?> removeUser(String userId) async {
+    try {
+      final uri = getUri(path: '/iam/v1/users/$userId');
+      final response = await sendRequest(
+        uri,
+        method: HttpMethod.delete,
+        accessToken: _accessToken,
+      );
+      if (response.statusCode != HttpStatus.ok) return null;
+
+      final responseBody = json.decode(response.body);
+      return Response<String>(data: responseBody['data']);
     } catch (error) {
       print(error);
       return null;
