@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:simple_iam/helpers/hook_helper.dart';
 import 'package:simple_iam/helpers/snackbar_helper.dart';
 import 'package:simple_iam/models/user_model.dart';
 import 'package:simple_iam/models/user_params_model.dart';
 import 'package:simple_iam/packages/users/logic/user_logic.dart';
 import 'package:simple_iam/packages/users/models/argument_model.dart';
+import 'package:simple_iam/packages/users/providers/users_provider.dart';
 import 'package:simple_iam/packages/users/screens/user_detail_screen.dart';
 import 'package:simple_iam/packages/users/widgets/dialogs/confirm_delete_dialog.dart';
 import 'package:simple_iam/packages/users/widgets/user_card.dart';
-import 'package:simple_iam/providers/token_provider.dart';
-import 'package:simple_iam/widgets/app_bar_title.dart';
 
 class UserListScreen extends HookConsumerWidget {
   const UserListScreen({super.key});
@@ -20,26 +19,19 @@ class UserListScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final UserListParams params = UserListParams.init();
-    final token = ref.watch(tokenProvider);
-    final userLogic = useUserLogic(token.accessToken);
+    final userLogic = useUserLogic(ref);
+    final users = ref.watch(usersProvider);
 
-    useEffect(
-      () {
-        userLogic.fetchUsers(params);
-        return null;
-      },
-      [],
-    );
+    useOnInit(() => userLogic.fetchUsers(params));
 
     return Scaffold(
       appBar: AppBar(
-        title: const AppBarTitle(title: 'Users'),
-        backgroundColor: Theme.of(context).primaryColor,
+        title: const Text('Users'),
       ),
       body: RefreshIndicator(
         onRefresh: () => userLogic.fetchUsers(params),
         child: UserListContent(
-          users: userLogic.users,
+          users: users,
           isLoading: userLogic.isFetchingUsers,
           onDeleteUser: (selectedUser) {
             showDialog(

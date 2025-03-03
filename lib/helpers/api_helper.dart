@@ -13,7 +13,7 @@ enum HttpMethod {
 
 Future<http.Response> sendRequest(
   Uri url, {
-  required HttpMethod method,
+  HttpMethod method = HttpMethod.get,
   String? accessToken,
   Map<String, String>? headers,
   Map<String, dynamic>? reqBody,

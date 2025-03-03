@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:simple_iam/api/user_api.dart';
 import 'package:simple_iam/models/user_model.dart';
-import 'package:simple_iam/providers/token_provider.dart';
 
-class UserCard extends HookConsumerWidget {
+class UserCard extends StatelessWidget {
   final User user;
   final void Function(User selectedUser)? onUserTap;
   final void Function(User selectedUser)? onDeleteUser;
@@ -17,10 +14,7 @@ class UserCard extends HookConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final token = ref.watch(tokenProvider);
-    final userApi = UserApi(token.accessToken);
-
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onUserTap != null ? () => onUserTap!(user) : null,
       child: Card(

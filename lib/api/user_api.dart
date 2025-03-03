@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:simple_iam/helpers/api_helper.dart';
+import 'package:simple_iam/helpers/object_helper.dart';
 import 'package:simple_iam/helpers/uri_helper.dart';
 import 'package:simple_iam/models/response_model.dart';
 import 'package:simple_iam/models/user_model.dart';
@@ -19,7 +20,7 @@ class UserApi {
       final response = await sendRequest(
         uri,
         method: HttpMethod.post,
-        reqBody: reqBody.toJson(),
+        reqBody: ObjectHelper.cleanObject(reqBody.toJson()),
       );
       if (response.statusCode != HttpStatus.ok) return null;
 
@@ -37,7 +38,6 @@ class UserApi {
       final response = await sendRequest(
         uri,
         accessToken: _accessToken,
-        method: HttpMethod.get,
       );
       if (response.statusCode != HttpStatus.ok) return null;
 
@@ -58,7 +58,6 @@ class UserApi {
       );
       final response = await sendRequest(
         uri,
-        method: HttpMethod.get,
         accessToken: _accessToken,
       );
       if (response.statusCode != HttpStatus.ok) return null;
@@ -68,6 +67,25 @@ class UserApi {
         data: getUserListFromJsonResponse(responseBody['data']),
         paging: Paging.fromJson(responseBody['paging']),
       );
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
+  Future<User?> updateUser(String userId, UserUpdateReqBody reqBody) async {
+    try {
+      final uri = getUri(path: '/iam/v1/users/$userId');
+      final response = await sendRequest(
+        uri,
+        method: HttpMethod.patch,
+        accessToken: _accessToken,
+        reqBody: ObjectHelper.cleanObject(reqBody.toJson()),
+      );
+      if (response.statusCode != HttpStatus.ok) return null;
+
+      final responseBody = json.decode(response.body);
+      return User.fromJson(responseBody['data']);
     } catch (error) {
       print(error);
       return null;

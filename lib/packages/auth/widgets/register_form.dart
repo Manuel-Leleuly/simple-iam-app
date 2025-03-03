@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:simple_iam/api/user_api.dart';
 import 'package:simple_iam/packages/auth/logic/auth_logic.dart';
 import 'package:simple_iam/packages/auth/validator/auth_validator.dart';
+import 'package:simple_iam/widgets/button_child_with_loading.dart';
 
 const authValidator = AuthValidator();
-const userApi = UserApi();
 
 class RegisterForm extends HookConsumerWidget {
   final VoidCallback onRegisterSuccess;
@@ -75,14 +74,10 @@ class RegisterForm extends HookConsumerWidget {
             onPressed: authLogic.isLoading
                 ? null
                 : () => authLogic.onRegisterSubmit(onRegisterSuccess),
-            child: switch (authLogic.isLoading) {
-              true => const SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: CircularProgressIndicator(),
-                ),
-              false => const Text('Register'),
-            },
+            child: ButtonChildWithLoading(
+              isLoading: authLogic.isLoading,
+              child: const Text('Register'),
+            ),
           )
         ],
       ),

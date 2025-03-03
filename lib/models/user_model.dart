@@ -19,6 +19,17 @@ class User {
     this.updatedAt,
   });
 
+  factory User.init() {
+    return const User(
+      id: '',
+      firstName: '',
+      lastName: '',
+      username: '',
+      email: '',
+      password: '',
+    );
+  }
+
   factory User.newUser({
     required String firstName,
     required String lastName,
@@ -46,6 +57,19 @@ class User {
       password: jsonData['password'] ?? '',
       createdAt: DateTime.parse(jsonData['created_at']),
       updatedAt: DateTime.parse(jsonData['updated_at']),
+    );
+  }
+
+  User copyWith({String? firstName, String? lastName, String? username}) {
+    return User(
+      id: id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      username: username ?? this.username,
+      email: email,
+      password: password,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 

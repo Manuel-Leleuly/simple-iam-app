@@ -4,19 +4,10 @@ import 'package:simple_iam/packages/auth/screens/auth_screen.dart';
 import 'package:simple_iam/packages/users/models/argument_model.dart';
 import 'package:simple_iam/packages/users/screens/user_detail_screen.dart';
 import 'package:simple_iam/packages/users/screens/user_list_screen.dart';
+import 'package:simple_iam/packages/users/screens/user_update_screen.dart';
 
 class RouteGenerator {
   static Route<Widget> generateRoute(RouteSettings settings) {
-    // final args = settings.arguments;
-    // print({'name': settings.name, 'args': args});
-
-    // final selectedScreen = switch (settings.name) {
-    //   AuthScreen.routeName => const AuthScreen(),
-    //   UserListScreen.routeName => const UserListScreen(),
-    //   UserDetailScreen.routeName => const UserDetailScreen(),
-    //   _ => const _ErrorRouteScreen(),
-    // };
-
     Widget selectedScreen = const _ErrorRouteScreen();
 
     switch (settings.name) {
@@ -28,7 +19,11 @@ class RouteGenerator {
         break;
       case UserDetailScreen.routeName:
         final args = settings.arguments as UserDetailScreenArgument;
-        selectedScreen = UserDetailScreen(user: args.selectedUser);
+        selectedScreen = UserDetailScreen(userId: args.selectedUser.id);
+        break;
+      case UserUpdateScreen.routeName:
+        final args = settings.arguments as UserUpdateScreenArgument;
+        selectedScreen = UserUpdateScreen(userId: args.selectedUser.id);
         break;
     }
 

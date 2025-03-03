@@ -7,3 +7,11 @@ class UserDetailScreenArgument {
     required this.selectedUser,
   });
 }
+
+class UserUpdateScreenArgument {
+  final User selectedUser;
+
+  UserUpdateScreenArgument({
+    required this.selectedUser,
+  });
+}

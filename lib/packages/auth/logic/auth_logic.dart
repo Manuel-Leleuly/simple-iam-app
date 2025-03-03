@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:simple_iam/api/auth_api.dart';
+import 'package:simple_iam/api/user_api.dart';
 import 'package:simple_iam/models/auth_model.dart';
 import 'package:simple_iam/models/user_model.dart';
 import 'package:simple_iam/models/user_params_model.dart';
-import 'package:simple_iam/packages/auth/widgets/register_form.dart';
+import 'package:simple_iam/packages/users/logic/user_form_logic.dart';
 import 'package:simple_iam/providers/token_provider.dart';
 
 const authApi = AuthApi();
+const userApi = UserApi();
 
 class AuthLogic {
   final bool isLoading;
@@ -39,32 +41,27 @@ class AuthLogic {
 AuthLogic useAuthLogic(BuildContext context, WidgetRef ref) {
   final isLoading = useState(false);
 
-  final formKey = useMemoized(() => GlobalKey<FormState>(), []);
-  final firstName = useTextEditingController();
-  final lastName = useTextEditingController();
-  final username = useTextEditingController();
-  final email = useTextEditingController();
-  final password = useTextEditingController();
+  final userCreationLogic = useUserFormLogic();
 
-  void onLoginSubmit(VoidCallback onSubmitAccess) async {
+  void onLoginSubmit(VoidCallback onSubmitSuccess) async {
     FocusScope.of(context).unfocus();
-    final isAllValid = formKey.currentState!.validate();
+    final isAllValid = userCreationLogic.formKey.currentState!.validate();
     if (!isAllValid) return;
 
-    formKey.currentState!.save();
+    userCreationLogic.formKey.currentState!.save();
 
     isLoading.value = true;
 
     try {
       final loginData = Login(
-        email: email.text,
-        password: password.text,
+        email: userCreationLogic.emailController.text,
+        password: userCreationLogic.passwordController.text,
       );
       final response = await authApi.login(loginData);
       if (response == null) return;
 
       ref.read(tokenProvider.notifier).setToken(response);
-      onSubmitAccess();
+      onSubmitSuccess();
     } finally {
       isLoading.value = false;
     }
@@ -72,20 +69,20 @@ AuthLogic useAuthLogic(BuildContext context, WidgetRef ref) {
 
   void onRegisterSubmit(VoidCallback onRegisterSuccess) async {
     FocusScope.of(context).unfocus();
-    final isAllValid = formKey.currentState!.validate();
+    final isAllValid = userCreationLogic.formKey.currentState!.validate();
     if (!isAllValid) return;
 
-    formKey.currentState!.save();
+    userCreationLogic.formKey.currentState!.save();
 
     isLoading.value = true;
 
     try {
       final newUser = User.newUser(
-        firstName: firstName.text,
-        lastName: lastName.text,
-        username: username.text,
-        email: email.text,
-        password: password.text,
+        firstName: userCreationLogic.firstNameController.text,
+        lastName: userCreationLogic.lastNameController.text,
+        username: userCreationLogic.usernameController.text,
+        email: userCreationLogic.emailController.text,
+        password: userCreationLogic.passwordController.text,
       );
       final reqBody = UserCreateReqBody.fromUser(newUser);
       await userApi.createUser(reqBody);
@@ -98,12 +95,12 @@ AuthLogic useAuthLogic(BuildContext context, WidgetRef ref) {
 
   return AuthLogic(
     isLoading: isLoading.value,
-    formKey: formKey,
-    firstNameController: firstName,
-    lastNameController: lastName,
-    usernameController: username,
-    emailController: email,
-    passwordController: password,
+    formKey: userCreationLogic.formKey,
+    firstNameController: userCreationLogic.firstNameController,
+    lastNameController: userCreationLogic.lastNameController,
+    usernameController: userCreationLogic.usernameController,
+    emailController: userCreationLogic.emailController,
+    passwordController: userCreationLogic.passwordController,
     onLoginSubmit: onLoginSubmit,
     onRegisterSubmit: onRegisterSubmit,
   );

@@ -34,6 +34,16 @@ class MyApp extends ConsumerWidget {
       title: 'Simple IAM',
       theme: ThemeData().copyWith(
         primaryColor: colorScheme.primary,
+        appBarTheme: AppBarTheme(
+          backgroundColor: colorScheme.primary,
+          titleTextStyle: GoogleFonts.lato().copyWith(
+            color: Colors.white,
+            fontSize: 22,
+          ),
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
+        ),
         scaffoldBackgroundColor: colorScheme.surface,
         colorScheme: colorScheme,
         textTheme: GoogleFonts.latoTextTheme(),

@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:simple_iam/api/auth_api.dart';
 import 'package:simple_iam/packages/auth/logic/auth_logic.dart';
 import 'package:simple_iam/packages/auth/validator/auth_validator.dart';
+import 'package:simple_iam/widgets/button_child_with_loading.dart';
 
 const authValidator = AuthValidator();
 const authApi = AuthApi();
@@ -53,14 +54,10 @@ class LoginForm extends HookConsumerWidget {
             onPressed: authLogic.isLoading
                 ? null
                 : () => authLogic.onLoginSubmit(onLoginSuccess),
-            child: switch (authLogic.isLoading) {
-              true => const SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: CircularProgressIndicator(),
-                ),
-              false => const Text('Login'),
-            },
+            child: ButtonChildWithLoading(
+              isLoading: authLogic.isLoading,
+              child: const Text('Login'),
+            ),
           ),
         ],
       ),
