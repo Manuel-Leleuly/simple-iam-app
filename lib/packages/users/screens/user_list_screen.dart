@@ -20,7 +20,7 @@ class UserListScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final UserListParams params = UserListParams.init();
     final userLogic = useUserLogic(ref);
-    final users = ref.watch(usersProvider);
+    final users = ref.watch(usersNotifierProvider);
 
     useOnInit(() => userLogic.fetchUsers(params));
 

@@ -1,8 +1,14 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:simple_iam/models/user_model.dart';
 
-class UsersNotifier extends StateNotifier<List<User>> {
-  UsersNotifier() : super([]);
+part 'users_provider.g.dart';
+
+@riverpod
+class UsersNotifier extends _$UsersNotifier {
+  @override
+  List<User> build() {
+    return [];
+  }
 
   set users(List<User> newUsers) {
     state = newUsers;
@@ -10,8 +16,9 @@ class UsersNotifier extends StateNotifier<List<User>> {
 
   void updateUser(User updatedUser) {
     final newUsers = List<User>.from(state);
-    final selectedUserIndex =
-        newUsers.indexWhere((user) => user.id == updatedUser.id);
+    final selectedUserIndex = newUsers.indexWhere(
+      (user) => user.id == updatedUser.id,
+    );
 
     newUsers[selectedUserIndex] = updatedUser;
 
@@ -22,7 +29,3 @@ class UsersNotifier extends StateNotifier<List<User>> {
     state = state.where((user) => user.id != userId).toList();
   }
 }
-
-final usersProvider = StateNotifierProvider<UsersNotifier, List<User>>(
-  (ref) => UsersNotifier(),
-);

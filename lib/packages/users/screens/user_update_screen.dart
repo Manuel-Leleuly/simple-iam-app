@@ -19,7 +19,7 @@ class UserUpdateScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final users = ref.watch(usersProvider);
+    final users = ref.watch(usersNotifierProvider);
     final user = users.firstWhere((user) => user.id == userId);
     final userFormLogic = useUserFormLogic(defaultValues: user);
     final userLogic = useUserLogic(ref);

@@ -22,6 +22,13 @@ class Token {
     required this.refreshToken,
   });
 
+  factory Token.init() {
+    return const Token(
+      accessToken: '',
+      refreshToken: '',
+    );
+  }
+
   factory Token.fromJson(Map<String, dynamic> jsonData) {
     return Token(
       accessToken: jsonData['access_token'],

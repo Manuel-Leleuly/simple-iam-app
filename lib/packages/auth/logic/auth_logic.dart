@@ -22,8 +22,14 @@ class AuthLogic {
   final TextEditingController emailController;
   final TextEditingController passwordController;
 
-  final void Function(VoidCallback onSubmitSuccess) onLoginSubmit;
-  final void Function(VoidCallback onRegisterSuccess) onRegisterSubmit;
+  final void Function({
+    required Login loginData,
+    required VoidCallback onSubmitSuccess,
+  }) onLoginSubmit;
+  final void Function({
+    required User registerData,
+    required VoidCallback onRegisterSuccess,
+  }) onRegisterSubmit;
 
   AuthLogic({
     required this.isLoading,
@@ -43,48 +49,32 @@ AuthLogic useAuthLogic(BuildContext context, WidgetRef ref) {
 
   final userCreationLogic = useUserFormLogic();
 
-  void onLoginSubmit(VoidCallback onSubmitSuccess) async {
+  void onLoginSubmit({
+    required Login loginData,
+    required VoidCallback onSubmitSuccess,
+  }) async {
     FocusScope.of(context).unfocus();
-    final isAllValid = userCreationLogic.formKey.currentState!.validate();
-    if (!isAllValid) return;
-
-    userCreationLogic.formKey.currentState!.save();
-
     isLoading.value = true;
-
     try {
-      final loginData = Login(
-        email: userCreationLogic.emailController.text,
-        password: userCreationLogic.passwordController.text,
-      );
       final response = await authApi.login(loginData);
       if (response == null) return;
 
-      ref.read(tokenProvider.notifier).setToken(response);
+      ref.read(tokenNotifierProvider.notifier).token = response;
       onSubmitSuccess();
     } finally {
       isLoading.value = false;
     }
   }
 
-  void onRegisterSubmit(VoidCallback onRegisterSuccess) async {
+  void onRegisterSubmit({
+    required User registerData,
+    required VoidCallback onRegisterSuccess,
+  }) async {
     FocusScope.of(context).unfocus();
-    final isAllValid = userCreationLogic.formKey.currentState!.validate();
-    if (!isAllValid) return;
-
-    userCreationLogic.formKey.currentState!.save();
-
     isLoading.value = true;
 
     try {
-      final newUser = User.newUser(
-        firstName: userCreationLogic.firstNameController.text,
-        lastName: userCreationLogic.lastNameController.text,
-        username: userCreationLogic.usernameController.text,
-        email: userCreationLogic.emailController.text,
-        password: userCreationLogic.passwordController.text,
-      );
-      final reqBody = UserCreateReqBody.fromUser(newUser);
+      final reqBody = UserCreateReqBody.fromUser(registerData);
       await userApi.createUser(reqBody);
 
       onRegisterSuccess();

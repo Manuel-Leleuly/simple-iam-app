@@ -1,84 +1,89 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:simple_iam/packages/auth/logic/auth_logic.dart';
 import 'package:simple_iam/packages/auth/validator/auth_validator.dart';
-import 'package:simple_iam/widgets/button_child_with_loading.dart';
+import 'package:simple_iam/packages/users/logic/user_form_logic.dart';
+import 'package:simple_iam/widgets/form/field_label.dart';
+import 'package:simple_iam/widgets/form/password_form_field.dart';
 
 const authValidator = AuthValidator();
 
 class RegisterForm extends HookConsumerWidget {
-  final VoidCallback onRegisterSuccess;
+  final UserFormLogic userFormLogic;
 
   const RegisterForm({
     super.key,
-    required this.onRegisterSuccess,
+    required this.userFormLogic,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authLogic = useAuthLogic(context, ref);
-
     return Form(
-      key: authLogic.formKey,
+      key: userFormLogic.formKey,
       child: Column(
         children: [
           TextFormField(
+            key: const ValueKey('register_first_name'),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             maxLength: 15,
             decoration: const InputDecoration(
-              labelText: 'First Name',
+              label: FieldLabel(
+                label: Text('First Name'),
+                isRequired: true,
+              ),
             ),
+            textCapitalization: TextCapitalization.words,
             validator: authValidator.validateFirstName,
-            controller: authLogic.firstNameController,
+            controller: userFormLogic.firstNameController,
           ),
           const SizedBox(height: 8),
           TextFormField(
+            key: const ValueKey('register_last_name'),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             maxLength: 15,
             decoration: const InputDecoration(
-              labelText: 'Last Name',
+              label: FieldLabel(
+                label: Text('Last Name'),
+              ),
             ),
+            textCapitalization: TextCapitalization.words,
             validator: authValidator.validateLastName,
-            controller: authLogic.lastNameController,
+            controller: userFormLogic.lastNameController,
           ),
           const SizedBox(height: 8),
           TextFormField(
+            key: const ValueKey('register_username'),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             maxLength: 30,
             decoration: const InputDecoration(
-              labelText: 'Username',
+              label: FieldLabel(
+                label: Text('Username'),
+                isRequired: true,
+              ),
             ),
             validator: authValidator.validateUsername,
-            controller: authLogic.usernameController,
+            controller: userFormLogic.usernameController,
           ),
           const SizedBox(height: 8),
           TextFormField(
+            key: const ValueKey('register_email'),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             maxLength: 20,
             decoration: const InputDecoration(
-              labelText: 'Email',
+              label: FieldLabel(
+                label: Text('Email'),
+                isRequired: true,
+              ),
             ),
             validator: authValidator.validateEmail,
             keyboardType: TextInputType.emailAddress,
-            controller: authLogic.emailController,
+            controller: userFormLogic.emailController,
           ),
           const SizedBox(height: 8),
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Password',
-            ),
-            obscureText: true,
-            autocorrect: false,
-            enableSuggestions: false,
-            validator: authValidator.validatePassword,
-            controller: authLogic.passwordController,
+          PasswordFormField(
+            passwordFieldKey: const ValueKey('register_password'),
+            passwordController: userFormLogic.passwordController,
+            validatePassword: authValidator.validatePassword,
           ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: authLogic.isLoading
-                ? null
-                : () => authLogic.onRegisterSubmit(onRegisterSuccess),
-            child: ButtonChildWithLoading(
-              isLoading: authLogic.isLoading,
-              child: const Text('Register'),
-            ),
-          )
         ],
       ),
     );

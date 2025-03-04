@@ -10,6 +10,8 @@ class UserFormLogic {
   final TextEditingController emailController;
   final TextEditingController passwordController;
 
+  final VoidCallback clearAllControllers;
+
   UserFormLogic({
     required this.formKey,
     required this.firstNameController,
@@ -17,6 +19,7 @@ class UserFormLogic {
     required this.usernameController,
     required this.emailController,
     required this.passwordController,
+    required this.clearAllControllers,
   });
 }
 
@@ -36,6 +39,14 @@ UserFormLogic useUserFormLogic({User? defaultValues}) {
     password.text = defaultValues.password;
   }
 
+  void clearAllControllers() {
+    firstName.clear();
+    lastName.clear();
+    username.clear();
+    email.clear();
+    password.clear();
+  }
+
   return UserFormLogic(
     formKey: formKey,
     firstNameController: firstName,
@@ -43,5 +54,6 @@ UserFormLogic useUserFormLogic({User? defaultValues}) {
     usernameController: username,
     emailController: email,
     passwordController: password,
+    clearAllControllers: clearAllControllers,
   );
 }

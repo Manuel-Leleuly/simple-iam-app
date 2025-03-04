@@ -9,7 +9,7 @@ import 'package:simple_iam/providers/token_provider.dart';
 import 'package:simple_iam/routes/routes.dart';
 
 final colorScheme = ColorScheme.fromSeed(
-  seedColor: Colors.purple,
+  seedColor: Colors.blue,
 );
 
 void main() {
@@ -28,14 +28,15 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // TODO: improve this
-    final isTokenValid = ref.watch(tokenProvider).accessToken.isNotEmpty;
+    final isTokenValid =
+        ref.watch(tokenNotifierProvider).accessToken.isNotEmpty;
 
     return MaterialApp(
       title: 'Simple IAM',
       theme: ThemeData().copyWith(
         primaryColor: colorScheme.primary,
         appBarTheme: AppBarTheme(
-          backgroundColor: colorScheme.primary,
+          backgroundColor: Colors.blue,
           titleTextStyle: GoogleFonts.lato().copyWith(
             color: Colors.white,
             fontSize: 22,

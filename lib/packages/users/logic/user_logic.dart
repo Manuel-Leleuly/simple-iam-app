@@ -38,8 +38,8 @@ UserLogic useUserLogic(WidgetRef ref) {
   final isUpdatingUser = useState<bool>(false);
   final isDeletingUser = useState<bool>(false);
 
-  final usersNotifier = ref.read(usersProvider.notifier);
-  final token = ref.watch(tokenProvider);
+  final usersNotifier = ref.read(usersNotifierProvider.notifier);
+  final token = ref.watch(tokenNotifierProvider);
   final userApi = UserApi(token.accessToken);
 
   Future<void> fetchUsers([UserListParams? params]) async {

@@ -1,25 +1,20 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:simple_iam/models/auth_model.dart';
 
-class TokenNotifier extends StateNotifier<Token> {
-  TokenNotifier()
-      : super(const Token(
-          accessToken: '',
-          refreshToken: '',
-        ));
+part 'token_provider.g.dart';
 
-  void setToken(Token newTokens) {
+@riverpod
+class TokenNotifier extends _$TokenNotifier {
+  @override
+  Token build() {
+    return Token.init();
+  }
+
+  set token(Token newTokens) {
     state = newTokens;
   }
 
   void clearTokens() {
-    state = const Token(
-      accessToken: '',
-      refreshToken: '',
-    );
+    state = Token.init();
   }
 }
-
-final tokenProvider = StateNotifierProvider<TokenNotifier, Token>(
-  (ref) => TokenNotifier(),
-);

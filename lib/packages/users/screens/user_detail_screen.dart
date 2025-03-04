@@ -16,7 +16,7 @@ class UserDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final users = ref.watch(usersProvider);
+    final users = ref.watch(usersNotifierProvider);
     final user = users.firstWhere((user) => user.id == userId);
 
     return Scaffold(
